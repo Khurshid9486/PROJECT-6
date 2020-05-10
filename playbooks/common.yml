@@ -1,0 +1,11 @@
+---
+- name: install initial packages on all boxes
+  hosts: all 
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: install all initial packages
+    yum:
+      name: ['man', 'man-pages', 'mlocate', 'vim', 'bind-utils']
+      state: latest
