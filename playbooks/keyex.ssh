@@ -1,0 +1,50 @@
+#!/bin/bash
+
+####################### Dir Create
+if [ -f .ssh/id_rsa* ]
+then
+  echo "seems like you already have a private key"
+elif [ "mkdir ~/.ssh" ]
+then
+  echo ".ssh Directory created"
+else
+  echo "Ooops there is a problem creating"
+fi
+
+######################## KEYGEN
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+
+######################## EXCHANGE
+sudo echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+ssh-copy-id $1
+#ssh-copy-id ansible@prdx-ntp601.ziyotek6.local
+#ssh-copy-id ansible@prdx-ntp602.ziyotek6.local
+#ssh-copy-id ansible@prdx-nsm601.ziyotek6.local
+#ssh-copy-id ansible@prdx-nsw601.ziyotek6.local
+#ssh-copy-id ansible@prdx-nsw602.ziyotek6.local
+#ssh-copy-id ansible@prdx-pxe601.ziyotek6.local
+#ssh-copy-id ansible@prdx-ftp601.ziyotek6.local
+#ssh-copy-id ansible@prdx-nfs601.ziyotek6.local
+#ssh-copy-id ansible@prdx-samba601.ziyotek6.local
+#ssh-copy-id ansible@prdx-mail601.ziyotek6.local
+#ssh-copy-id ansible@prdx-db661.ziyotek6.local
+#ssh-copy-id ansible@prdx-db676.ziyotek6.local
+#ssh-copy-id ansible@prdx-web661.ziyotek6.local
+#ssh-copy-id ansible@prdx-web671.ziyotek6.local
+#ssh-copy-id ansible@prdx-web662.ziyotek6.local
+#ssh-copy-id ansible@prdx-web672.ziyotek6.local
+#ssh-copy-id ansible@prdx-web663.ziyotek6.local
+#ssh-copy-id ansible@prdx-web673.ziyotek6.local
+#ssh-copy-id ansible@prdx-lb661.ziyotek6.local
+#ssh-copy-id ansible@prdx-lb671.ziyotek6.local
+#ssh-copy-id ansible@prdx-nagios601.ziyotek6.local
+#ssh-copy-id ansible@prdx-ldap601.ziyotek6.local
+#ssh-copy-id ansible@prdx-ansible601.ziyotek6.local
+#ssh-copy-id ansible@prdx-dockm601.ziyotek6.local
+#ssh-copy-id ansible@prdx-dockw601.ziyotek6.local
+#ssh-copy-id ansible@prdx-dockw602.ziyotek6.local
+#ssh-copy-id ansible@prdx-jenkins601.ziyotek6.local
+#ssh-copy-id ansible@prdx-kubem601.ziyotek6.local
+#ssh-copy-id ansible@prdx-kubew601.ziyotek6.local
+#ssh-copy-id ansible@prdx-kubew602.ziyotek6.local
+

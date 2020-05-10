@@ -1,0 +1,38 @@
+---
+- name: Install and configuring autofs
+  hosts: all
+  user: ansible
+  become: yes
+  vars:
+    pkg: autofs
+
+  tasks:
+  - name: installing autofs
+    yum:
+      name: "{{ pkg }}"
+      state: present
+  tasks:
+  - name: installing autofs
+    yum:
+      name: nfs-utils
+      state: present 
+  - name: copying the files
+    copy:
+      src: /etc/auto.demo
+      dest: /etc/auto.demo
+  - name: copying the files
+    copy:
+      src: /etc/auto.master
+      dest: /etc/auto.master
+    notify: restart autofs
+#  - name: make sure autofs will start after reboot
+#    service:
+#      name: "{{ pkg }}"
+#      state: started
+#      enabled: yes
+  handlers:
+    - name: restart autofs
+      service:
+        name: "{{ pkg }}"
+        state: restarted
+        enabled: yes

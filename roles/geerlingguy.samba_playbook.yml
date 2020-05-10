@@ -1,0 +1,7 @@
+---
+- name: AZIZ AKA
+  hosts: sambaserver
+  user: ansible
+  become: true
+  roles:
+   - geerlingguy.samba

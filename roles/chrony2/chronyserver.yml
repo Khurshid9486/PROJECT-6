@@ -1,0 +1,8 @@
+---
+- hosts: timeservers
+  become: true
+  roles:
+
+   - role: ansible.chrony
+     chrony__ntp_servers:
+     - 'prdx-ntp602.ziyotek6.local'
