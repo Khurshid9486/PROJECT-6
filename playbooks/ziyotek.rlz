@@ -1,0 +1,48 @@
+$TTL   1D
+@       IN      SOA     prdx-nsm601.ziyotek6.local. root.prdx-nsm601.ziyotek6.local. (
+                        16               ; serial
+                        1D              ; refresh
+                        1H              ; retry
+                        1W              ; expire
+                        3H )            ; minimum
+
+; name servers NS records
+           IN      NS      prdx-nsm601.ziyotek6.local.
+           IN      NS      prdx-nsw601.ziyotek6.local.
+           IN      NS      prdx-nsw602.ziyotek6.local.
+; name servers PTR records
+12          IN      PTR     prdx-nsm601.ziyotek6.local.
+13          IN      PTR     prdx-nsw601.ziyotek6.local.
+14          IN      PTR     prdx-nsw601.ziyotek6.local.
+; servers
+10          IN      PTR     prdx-ntp601.ziyotek6.local.
+21          IN      PTR     prdx-ntp602.ziyotek6.local.
+16	    IN	    PTR     prdx-ftp601.ziyotek6.local.
+15          IN      PTR     prdx-pxe601.ziyotek6.local.
+18  	    IN	    PTR     prdx-nfs601.ziyotek6.local.
+20  	    IN	    PTR	    prdx-samba601.ziyotek6.local.
+19	    IN	    PTR	    prdx-mail601.ziyotek6.local.
+22  	    IN	    PTR	    prdx-db661.ziyotek6.local.
+23  	    IN	    PTR	    prdx-db676.ziyotek6.local.
+24  	    IN      PTR	    prdx-web661.ziyotek6.local.
+25  	    IN	    PTR     prdx-web671.ziyotek6.local.
+26  	    IN	    PTR     prdx-web662.ziyotek6.local.
+27  	    IN	    PTR	    prdx-web672.ziyotek6.local.
+28  	    IN	    PTR	    prdx-web663.ziyotek6.local.
+29	    IN	    PTR	    prdx-web673.ziyotek6.local.
+30	    IN	    PTR	    prdx-lb661.ziyotek6.local.
+31	    IN	    PTR	    prdx-lb671.ziyotek6.local.
+32  	    IN	    PTR	    prdx-nagios601.ziyotek6.local.
+33	    IN	    PTR     prdx-ldap601.ziyotek6.local.
+17	    IN 	    PTR	    prdx-ansible601.ziyotek6.local.
+34	    IN	    PTR	    prdx-dockm601.ziyotek6.local.
+35	    IN	    PTR	    prdx-dockw601.ziyotek6.local.
+36	    IN	    PTR	    prdx-dockw602.ziyotek.local.
+38	    IN	    PTR	    prdx-jenkins601.ziyotek6.local.
+37	    IN	    PTR	    prdx-kubem601.ziyotek6.local.
+39	    IN	    PTR	    prdx-kubew601.ziyotek6.local.
+40	    IN	    PTR	    prdx-kubew602.ziyotek6.local.
+50	    IN	    PTR	    labx-001.ziyotek6.local.			
+51          IN      PTR     labx-002.ziyotek6.local.
+52	    IN	    PTR	    test-6.ziyotek6.local.
+55	    IN	    PTR	    ldap-tester.ziyotek6.local.

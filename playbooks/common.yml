@@ -7,5 +7,6 @@
   tasks:
   - name: install all initial packages
     yum:
-      name: ['man', 'man-pages', 'mlocate', 'vim', 'bind-utils']
+      name: ['man', 'man-pages', 'mlocate', 'vim', 'bind-utils', 'autofs']
       state: latest
+  

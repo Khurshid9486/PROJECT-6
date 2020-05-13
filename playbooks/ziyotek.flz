@@ -1,0 +1,53 @@
+$TTL    1D
+@       IN      SOA     prdx-nsm601.ziyotek6.local. root.prdx-nsm601.ziyotek6.local. (
+                        16              ; Serial
+                        1D              ; Refresh
+                        1H              ; Retry
+                        1W              ; Expire
+                        3H )            ; minimum
+
+; name servers NS records
+            IN      NS      prdx-nsm601.ziyotek6.local.
+            IN      NS      prdx-nsw601.ziyotek6.local.
+	    IN	    NS	    prdx-nsw602.ziyotek6.local.
+
+; name servers A records
+prdx-nsm601  IN      A       192.168.37.12
+prdx-nsw601  IN      A       192.168.37.13
+prdx-nsw602  IN      A       192.168.37.14
+
+; servers
+prdx-ntp601          IN      A       192.168.37.10
+prdx-ntp602          IN      A       192.168.37.21
+master-dns           IN      CNAME   prdx-nsm601.ziyotek6.local.
+slave-dns            IN      CNAME   prdx-nsw601.ziyotek6.local.
+slave-dns2           IN      CNAME   prdx-nsw602.ziyotek6.local.
+prdx-ftp601	     IN	     A       192.168.37.16
+prdx-pxe601	     IN	     A	     192.168.37.15
+prdx-nfs601	     IN	     A	     192.168.37.18
+prdx-samba601	     IN      A	     192.168.37.20
+prdx-mail601	     IN	     A	     192.168.37.19
+prdx-db661	     IN	     A	     192.168.37.22
+prdx-db676	     IN	     A	     192.168.37.23
+prdx-web661	     IN	     A 	     192.168.37.24
+prdx-web671	     IN	     A 	     192.168.37.25
+prdx-web662	     IN	     A	     192.168.37.26
+prdx-web672	     IN	     A	     192.168.37.27
+prdx-web663	     IN	     A	     192.168.37.28
+prdx-web673	     IN	     A 	     192.168.37.29
+prdx-lb661	     IN	     A       192.168.37.30
+prdx-lb671	     IN	     A	     192.168.37.31
+prdx-nagios601	     IN	     A	     192.168.37.32
+prdx-ldap601	     IN	     A	     192.168.37.33
+prdx-ansible601	     IN	     A	     192.168.37.17
+prdx-dockm601	     IN	     A	     192.168.37.34
+prdx-dockw601	     IN	     A	     192.168.37.35
+prdx-dockw602	     IN	     A       192.168.37.36
+prdx-jenkins601	     IN	     A	     192.168.37.38
+prdx-kubem601	     IN	     A	     192.168.37.37
+prdx-kubew601	     IN	     A	     192.168.37.39
+prdx-kubew602	     IN	     A       192.168.37.40
+labx-001	     IN	     A	     192.168.37.50
+labx-002	     IN      A       192.168.37.51 	
+test-6	             IN	     A	     192.168.37.52
+ldap-tester	     IN	     A	     192.168.37.55

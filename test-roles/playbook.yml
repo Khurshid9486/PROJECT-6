@@ -1,0 +1,7 @@
+---
+- name: JENKINS
+  hosts: jenkins
+  user: ansible
+  become: true
+  roles:
+   - ansible-role-jenkins

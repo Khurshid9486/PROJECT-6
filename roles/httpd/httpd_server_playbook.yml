@@ -1,0 +1,29 @@
+---
+- name: installing and configuring the HTTPD
+  hosts: webserver3
+  user: ansible
+  become: yes
+  vars:
+    web_pkg: httpd
+
+  tasks:
+  - name: installing the apache
+    yum:
+      name: "{{ web_pkg }}"
+      state: present
+  - name: copying the index file from localhost
+    copy:
+      src: /ansible/templates/webserver1
+      dest: /var/www/html/
+    notify: restart apache
+  - name: make sure apache is running and enabled
+    service:
+      name: "{{ web_pkg }}"
+      state: started
+      enabled: yes
+  handlers:
+    - name: restart apache
+      service:
+        name: "{{ web_pkg }}"
+        state: restarted
+

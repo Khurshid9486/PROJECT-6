@@ -17,7 +17,9 @@ ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 ######################## EXCHANGE
 echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
+ssh-copy-id ansible@192.168.37.21
 ssh-copy-id ansible@192.168.37.12
+ssh-copy-id ansible@192.168.37.10
 ssh-copy-id ansible@192.168.37.13
 ssh-copy-id ansible@192.168.37.14
 ssh-copy-id ansible@192.168.37.15
@@ -45,3 +47,7 @@ ssh-copy-id ansible@192.168.37.37
 ssh-copy-id ansible@192.168.37.38
 ssh-copy-id ansible@192.168.37.39
 ssh-copy-id ansible@192.168.37.40
+ssh-copy-id ansible@192.168.37.50
+ssh-copy-id ansible@192.168.37.51
+ssh-copy-id ansible@192.168.37.52
+

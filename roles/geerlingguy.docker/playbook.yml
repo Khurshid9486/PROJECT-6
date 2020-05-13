@@ -1,0 +1,6 @@
+- hosts: test2
+  vars:
+    kubernetes_allow_pods_on_master: true
+
+  roles:
+    - geerlingguy.kubernetes

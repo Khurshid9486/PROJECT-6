@@ -1,9 +1,9 @@
 ---
-- hosts: prdx-db146.ziyotek4.local
+- hosts: test2
   roles:
     - apache-server
     - php-stack
     - mariadb-server
     - phpMyAdmin
-  become: yes
+  become: true
 

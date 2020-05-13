@@ -16,7 +16,7 @@ ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 
 ######################## EXCHANGE
 sudo echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-ssh-copy-id $1
+ssh-copy-id ansible@192.168.37.{12..39}
 #ssh-copy-id ansible@prdx-ntp601.ziyotek6.local
 #ssh-copy-id ansible@prdx-ntp602.ziyotek6.local
 #ssh-copy-id ansible@prdx-nsm601.ziyotek6.local

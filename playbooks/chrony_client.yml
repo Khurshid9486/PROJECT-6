@@ -1,0 +1,21 @@
+---
+- name: EXCHANGING chrony.conf file WITH ALL BOXES!!
+  hosts: all
+  user: ansible
+  become: true
+  vars:
+    pkg: /ansible/playbooks/chrony.conf
+
+  tasks:
+  - name: Copying
+    copy:
+      src: "{{ pkg }}"
+      dest: /etc/chrony.conf
+      notify: restart chronyd 
+
+  handlers:
+    - name: restart chronyd
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes

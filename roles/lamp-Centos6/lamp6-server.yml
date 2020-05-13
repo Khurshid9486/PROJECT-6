@@ -1,0 +1,10 @@
+---
+- hosts: test6
+  roles:
+    - epel-relese
+    - apache-server
+    - php-stack
+    - ansible-role-mysql
+    - phpMyAdmin
+  become: true
+

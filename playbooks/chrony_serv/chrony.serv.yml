@@ -1,0 +1,39 @@
+---
+
+- name: INSTALLING THE CHRONY PACKAGE AND CONGURING THE SERVICE
+  hosts: timeservers
+  user: ansible
+  become: true
+  vars:
+    pkg: chrony
+  
+  tasks:
+  - name: CHRONY DELETE
+    yum:
+      name: "{{ pkg }}"
+      state: absent
+  - name: MAKING SURE NTP DELETED 
+    yum:
+      name: ntp
+      state: absent
+  - name: installing
+    yum:
+      name: "{{ pkg }}"
+      state: latest
+    notify: restart chronyd
+  
+  tasks:
+  - name: copying the index file from localhost
+    copy:
+      src: /ansible/playbooks/chrony_serv/chrony.conf
+      dest: /etc/chrony.conf
+  - name: make sure chrony is running and enabled
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+  handlers:
+  - name: restart chronyd
+    service:
+      name: chronyd
+      state: restarted
