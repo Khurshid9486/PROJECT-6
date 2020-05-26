@@ -1,7 +1,7 @@
 ---
-- name: JENKINS
-  hosts: jenkins
-  user: ansible
+- name: MySQL
+  hosts: prdx-db661.ziyotek6.local 
+  user: root
   become: true
   roles:
-   - ansible-role-jenkins
+   - ansible-role-mysql

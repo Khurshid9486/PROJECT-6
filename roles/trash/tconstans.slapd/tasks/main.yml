@@ -1,0 +1,202 @@
+---
+# tasks file for /etc/ansible/roles/slapd
+
+- name: OS specific vars
+  include_vars: "{{ ansible_distribution }}.yml"
+
+- name: CentOS8 stuff
+  block:
+  - name: CentOS 8 specific vars
+    include_vars: CentOS8.yml
+
+  - name: configure Symas repo for CentOS8
+    get_url:
+      url:  https://repo.symas.com/configs/SOFL/rhel8/sofl.repo
+      dest: /etc/yum.repos.d/sofl.repo
+  when: ansible_distribution_major_version == 8 and ansible_distribution =='CentOS'
+
+- name: install
+  package:
+    name: "{{ ldap_packages }}"
+    state: present
+
+- name: configure client
+  template:
+    src: ldap.conf
+    dest: /etc/openldap/ldap.conf
+    mode: 0644
+
+- name: activate service
+  service:
+    name: "{{ ldap_service }}"
+    state: started
+    enabled: yes
+
+- name: configure main database - admin, suffix, cache, acl
+  block:
+  - name: remove existing acl
+    ldap_attr:
+      dn: olcDatabase={2}hdb,cn=config
+      name: olcaccess
+      values: []
+      state: exact
+
+  - name: admin, suffix and cache
+    ldap_attr:
+      dn: olcDatabase={2}hdb,cn=config
+      name: "{{ item.key }}"
+      values: "{{ item.value }}"
+      state: exact
+    with_dict:
+      olcSuffix: "{{ ldap_suffix }}"
+      olcRootDN: "{{ ldap_admin_dn }}"
+      olcRootPW: "{{ ldap_admin_password }}"
+      olcDbCheckpoint: "{{ ldap_checkpoint }}"
+      olcDbCacheSize: "{{ ldap_cache_size }}"
+      olcDbIDLCacheSize: "{{ ldap_idlcache_size }}"
+      olcAccess:
+        - >-
+          {0}to attrs=userPassword,mail
+          by self write
+          by anonymous auth
+          by * none
+        - >-
+          {1}to dn.sub={{ ldap_suffix }}
+          by users read
+          by * none
+    ignore_errors: true
+
+  - name: remove existing indexes
+    ldap_attr:
+      dn: olcDatabase={2}hdb,cn=config
+      values: []
+      name: olcDbIndex
+      state: exact
+
+  - name: add indexes
+    ldap_attr:
+      dn: olcDatabase={2}hdb,cn=config
+      name: "olcDbIndex"
+      values: "{{ item }}"
+    loop:
+      - objectClass pres,eq
+      - uid,mail eq
+
+- name: reconfigure slapd - access to cn=config and cn=monitor
+  ldap_attr:
+    dn: "{{ item }}"
+    name: olcAccess
+    values:
+      >-
+      to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
+      by dn.base={{ ldap_admin_dn }}  manage
+      by * none
+    state: exact
+  loop:
+  - olcDatabase={0}config,cn=config
+  - olcDatabase={1}monitor,cn=config
+
+- name: load additionnal schema
+  include_tasks: import_ldap_schema.yml
+  loop: "{{ ldap_schemas }}"
+  loop_control:
+    loop_var: schema
+
+- name: create suffix
+  ldap_entry:
+    server_uri: ldap://localhost
+    bind_dn: "{{ ldap_admin_dn }}"
+    bind_pw: "{{ ldap_admin_password }}"
+    dn: "{{ ldap_suffix }}"
+    objectClass: domain
+    attributes:
+      dc: "{{ ldap_domain }}"
+
+- name: create passwd file
+  copy:
+    dest: "{{ ldap_secret_file }}"
+    mode: 0600
+    content: "{{ ldap_admin_password }}"
+
+- name: import data
+  block:
+  - name:  create initial directory
+    file:
+      path: /root/Ldif
+      state: directory
+      mode: 0700
+
+  - name: send ldif files
+    template:
+      src: "{{ item }}"
+      dest: /root/Ldif/
+      mode: 0600
+    loop: "{{ ldap_ldif_files }}"
+
+  - name: get list of ldif files
+    find:
+      paths: /root/Ldif
+      patterns: "*.ldif"
+      file_type: file
+    register: ldif_list
+
+  - name: import ldif files
+    command: "ldapadd -c -y {{ ldap_secret_file }} -xD {{ ldap_admin_dn }} -f {{ item .path }}"
+    with_items: "{{ ldif_list.files }}"
+    ignore_errors: true
+
+  when: ldap_ldif_files is defined
+
+- name: configure replication provider
+  include_tasks: replication_provider.yml
+  when: ldap_replication_provider
+
+- name: configure replication consumer
+  include_tasks: replication_consumer.yml
+  when: ldap_replication_consumer
+
+# cannot use ldap_entry module because attr olcTLS* don't have equality matching
+# rules ...
+# instead send ldif and process ...
+
+- name: configure ssl
+  tags: ssl
+  block:
+
+  - name: send ldif file
+    template:
+      src: ssl.ldif
+      dest: /root/
+
+  - name: import ldif
+    command: ldapmodify  -c -Y EXTERNAL -H ldapi:/// -f /root/ssl.ldif
+
+  - name: configure url
+    lineinfile:
+      path: /etc/sysconfig/slapd
+      regexp: '^SLAPD_URLS="ldapi:/// ldap:///"'
+      line: 'SLAPD_URLS="ldapi:/// ldap:/// ldaps:///"'
+      state: present
+    notify: restart_slapd
+
+  - name: remove ldif
+    file:
+      path: /root/ssl.ldif
+      state: absent
+  when: ldap_have_ssl
+
+- name: configure ldap aliases
+  tags: shell
+  template:
+    src: ldap_aliases.sh
+    dest: /etc/profile.d/
+
+- name: add some entries
+  ldap_entry:
+    dn: "{{ item.dn }}"
+    objectClass: "{{ item.objectClass }}"
+    attributes: "{{ item.attributes }}"
+    state: present
+  loop: "{{ ldap_entries }}"
+  when: ldap_entries is defined
+  ignore_errors: true

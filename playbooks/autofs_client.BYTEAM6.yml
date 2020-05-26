@@ -18,18 +18,18 @@
       state: present 
   - name: copying the files
     copy:
-      src: /etc/auto.demo
+      src: /etc/auto.home
       dest: /etc/auto.demo
   - name: copying the files
     copy:
       src: /etc/auto.master
       dest: /etc/auto.master
     notify: restart autofs
-#  - name: make sure autofs will start after reboot
-#    service:
-#      name: "{{ pkg }}"
-#      state: started
-#      enabled: yes
+# - name: make sure autofs will start after reboot
+#     service:
+#       name: "{{ pkg }}"
+#       state: started
+#       enabled: yes
   handlers:
     - name: restart autofs
       service:

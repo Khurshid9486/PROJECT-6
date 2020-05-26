@@ -1,0 +1,8 @@
+---
+# defaults file for ldap_server
+
+#The domain prefix for ldap
+openldap_server_domain_name: example.com
+
+#This is the password for admin for openldap 
+openldap_server_rootpw: password

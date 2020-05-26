@@ -1,0 +1,49 @@
+- name: Init a new swarm with default parameters manager
+  hosts: dockerswarmmaster
+  remote_user: ansible
+  become: true
+
+  tasks: 
+    - name: Initialize Docker Swarm
+      shell: >
+           docker swarm init
+           --advertise-addr=192.168.37.34:2377
+
+- name: Master
+  hosts: dockerswarmmaster
+  remote_user: ansible
+  become: true
+
+  tasks:
+    - name: Add worker to swarm
+      shell:
+        cmd: docker swarm join-token worker > /home/ansible/joint.sh && chmod +x /home/ansible/joint.sh
+   
+    - name: Delete a string
+      shell: 
+        cmd: sed '/To add a worker to this swarm, run the following command:/d' /home/ansible/joint.sh
+
+    - name: Delete a string
+      shell:
+        cmd: sed -i '1s/^/#!\/bin\/bash/' /home/ansible/joint.sh
+      
+    - name: Add worker to swarm
+      shell: 
+        cmd: scp /home/ansible/joint.sh 192.168.37.35:/home/ansible/joint.sh  
+
+    - name: Add worker to swarm
+      shell:
+        cmd: scp /home/ansible/joint.sh 192.168.37.36:/home/ansible/joint.sh
+
+- name: Worker
+  hosts: dockerswarmworker
+  remote_user: ansible
+  become: true
+  
+  tasks:
+    - name: Add worker to swarm
+      shell:
+        cmd: bash /home/ansible/joint.sh
+
+
+

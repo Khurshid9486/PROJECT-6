@@ -1,0 +1,45 @@
+---
+- name: create replication account
+  ldap_entry:
+    dn: "cn={{ ldap_replication_account }},{{ ldap_suffix }}"
+    objectClass: person
+    attributes:
+     sn: "{{ ldap_replication_account }}"
+     userPassword: "{{ ldap_replication_password }}"
+    params: "{{ ldap_auth }}"
+
+- name: check wether module is already loaded
+  command: ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config   objectClass=olcModuleList olcmoduleload
+  register: ldap_result
+
+- name: add syncprov overlay module
+  ldap_entry:
+    dn: cn=module,cn=config
+    objectClass: olcModuleList
+    attributes:
+      cn: module
+      olcModuleLoad: syncprov.la
+  when: '"syncprov.la" not in  ldap_result.stdout'
+
+- name: add syncprov overlay config
+  ldap_entry:
+    dn: olcOverlay=syncprov,olcDatabase={2}hdb,cn=config
+    objectClass: olcSyncProvConfig
+    attributes:
+      olcOverlay: syncprov
+      olcSpCheckpoint: 100 10
+      olcSpSessionLog: 200
+
+- name: configure serverid
+  ldap_attr:
+    dn: cn=config
+    name: olcServerId
+    values: "{{ ldap_replication_server_id|default(42) }}"
+
+- name: add indexes for replication
+  ldap_attr:
+    dn: olcdatabase={2}hdb,cn=config
+    name: olcDbIndex
+    values:
+    - entryUUID eq
+    - entryCSN eq

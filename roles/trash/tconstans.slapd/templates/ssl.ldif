@@ -1,0 +1,17 @@
+dn: cn=config
+changetype: modify
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: {{ ldap_ssl_cert_path }}
+-
+replace: olcTLSCertificateKeyfile
+olcTLSCertificateKeyfile: {{ ldap_ssl_key_path }}
+-
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: TLSv1+RSA:!NULL
+-
+replace: olctlsverifyclient
+olctlsverifyclient: never
+-
+replace: olctlscacertificatefile
+olctlscacertificatefile: {{ ldap_ssl_cacert_path }}
+

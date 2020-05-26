@@ -1,0 +1,6 @@
+---
+- hosts: ldapserver
+  remote_user: root
+  become: yes
+  roles:
+    - /ansible/PROJECT-6/roles/ldap_server_by_SUNNY/ldap_server 

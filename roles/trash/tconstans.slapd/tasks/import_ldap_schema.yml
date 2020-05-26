@@ -1,0 +1,9 @@
+- name: check if schema is loaded
+  command: "ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=schema,cn=config dn"
+  register: ldap_schema_list
+  changed_when: false
+
+- name: import additional schemas
+  command: "ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ schema }}.ldif"
+  when: schema not in ldap_schema_list.stdout
+

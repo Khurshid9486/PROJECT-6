@@ -1,0 +1,6 @@
+ldap_packages:
+  - symas-openldap-servers
+  - symas-openldap-clients
+  - python3-ldap.x86_64
+ldap_service: slapd
+ldap_user: ldap

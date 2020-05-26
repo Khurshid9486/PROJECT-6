@@ -1,0 +1,6 @@
+---
+- name: HAPROXY
+  hosts: prdx-lb661.ziyotek6.local 
+  become: yes
+  roles:
+    - { role: /ansible/PROJECT-6/test-roles/geerlingguy.haproxy }

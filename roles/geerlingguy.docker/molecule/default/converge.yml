@@ -1,6 +1,7 @@
 ---
 - name: Converge
-  hosts: all
+  remote_user: ansible
+  hosts: test1
   become: true
 
   pre_tasks:

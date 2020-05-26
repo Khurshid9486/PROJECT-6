@@ -1,0 +1,8 @@
+---
+- name: Deploy Kubemaster
+  hosts: test1
+  remote_user: ansible
+  become: true
+
+  roles:
+    - /ansible/PROJECT-6/roles/geerlingguy.kubernetes

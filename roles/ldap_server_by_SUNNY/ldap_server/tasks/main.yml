@@ -1,0 +1,63 @@
+---
+# tasks file for ldap_server
+  - name: install all initial packages
+    yum:
+      name: ['epel-release','openldap', 'openldap-clients', 'openldap-servers', 'openssl', 'httpd','phpldapadmin']
+      state: latest
+  - name: copying all files for ldapmodify command to the /home/ansible
+    template: src=hdb.ldif.j2 dest=/home/ansible/hdb.ldif
+  - name: copying all files for ldapmodify command to the /home/ansible
+    template: src=monitor.ldif.j2 dest=/home/ansible/monitor.ldif
+  - name: copying all files for ldapmodify command to the /home/ansible
+    template: src=key.ldif.j2 dest=/home/ansible/key.ldif
+  - name: copying all files for ldapmodify command to the /home/ansible
+    template: src=base.ldif.j2 dest=/home/ansible/base.ldif
+  - name: copying files needed for PHPMYLPAD
+    template: src=config.php.j2 dest=/etc/phpldapadmin/config.php
+  - name: copying files needed for PHPMYLPAD
+    template: src=phpldapadmin.conf.j2 dest=/etc/httpd/conf.d/phpldapadmin.conf
+  - name: Start service slapd, if not started
+    service:
+      name: slapd
+      state: started
+      enabled: yes
+  
+  
+  - name : ldapmodify -Y EXTERNAL -H ldapi:/// -f hdb.ldif
+    shell: 
+      cmd: ldapmodify -Y EXTERNAL -H ldapi:/// -f /home/ansible/hdb.ldif
+  - name: ldapmodify -Y EXTERNAL -H ldapi:/// -f monitor.ldif
+    shell: 
+      cmd: ldapmodify -Y EXTERNAL -H ldapi:/// -f /home/ansible/monitor.ldif
+  - name: Configure OpenLDAP to listen SSL/TLS
+    template: src=ldap.j2 dest=/etc/sysconfig/ldap
+  - name: ldapmodify -Y EXTERNAL -H ldapi:/// -f key.ldif
+    shell: 
+      cmd: ldapmodify -Y EXTERNAL -H ldapi:/// -f /home/ansible/key.ldif
+  - name: Restart service httpd, in all cases
+    service:
+      name: httpd
+      state: restarted
+  - name: Restart service slapd in all cases
+    service:
+      name: slapd
+      state: restarted
+  - name: ldapadd -x -D "cn=admin,dc=ziyotek6,dc=local" -f base.ldif
+    shell: 
+      cmd: ldapadd -x -D "cn=admin,dc=ziyotek6,dc=local" -f /home/ansible/base.ldif -w password
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+    shell: 
+      cmd: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+    shell: 
+      cmd: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+    shell: 
+      cmd: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+  - name: Restart service httpd, in all cases
+    service:
+      name: httpd
+      state: restarted
+
+
+      ###ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created 

@@ -1,0 +1,6 @@
+---
+- hosts: ldapserver
+  remote_user: root
+  become: yes
+  roles:
+    - ldap_server

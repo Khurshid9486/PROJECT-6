@@ -1,6 +1,6 @@
 $TTL   1D
 @       IN      SOA     prdx-nsm601.ziyotek6.local. root.prdx-nsm601.ziyotek6.local. (
-                        16               ; serial
+                        19               ; serial
                         1D              ; refresh
                         1H              ; retry
                         1W              ; expire
@@ -44,5 +44,4 @@ $TTL   1D
 40	    IN	    PTR	    prdx-kubew602.ziyotek6.local.
 50	    IN	    PTR	    labx-001.ziyotek6.local.			
 51          IN      PTR     labx-002.ziyotek6.local.
-52	    IN	    PTR	    test-6.ziyotek6.local.
-55	    IN	    PTR	    ldap-tester.ziyotek6.local.
+52	    IN	    PTR	    labx-003.ziyotek6.local.

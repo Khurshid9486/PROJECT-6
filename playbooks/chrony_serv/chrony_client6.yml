@@ -1,24 +1,22 @@
 ---
 - name: EXCHANGING chrony.conf file WITH ALL BOXES!!
-  hosts: centos6
+  hosts: timeservers
   user: ansible
   become: true
   vars:
-    pkg: /ansible/playbooks/chrony.conf
+   pkg: /ansible/PROJECT-6/playbooks/chrony_serv/chrony.conf
 
   tasks:
   - name: installing chrony
     yum:
       name: chrony
       state: present 
- 
-  tasks:
-  - name: Copying
-    copy:
-      src: "{{ pkg }}"
-      dest: /etc/chrony.conf
+#  tasks:
+#  - name: Copying
+#    copy:
+#      src: "{{ pkg }}" 
+#      dest: /etc/chrony.conf
       notify: restart chronyd
-
   handlers:
   - name: restart chronyd
     service:

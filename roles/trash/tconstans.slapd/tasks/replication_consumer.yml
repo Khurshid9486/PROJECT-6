@@ -1,0 +1,19 @@
+---
+- name: add synrepl entry
+  ldap_attr:
+    dn: olcDatabase={2}hdb,cn=config
+    name: "{{ item.name }}"
+    values: "{{ item.value }}"
+  loop:
+   - name: olcSyncRepl
+     value: |
+      rid=001
+       provider="{{ ldap_replication_provider_uri }}"
+       binddn="cn={{ ldap_replication_account }},{{ ldap_suffix }}"
+       bindmethod="simple"
+       credentials="{{ ldap_replication_password }}"
+       searchbase="{{ ldap_suffix }}"
+       type=refreshAndPersist
+       retry="10 +"
+   - name: olcUpdateRef
+     value: "{{ ldap_provider_uri }}"

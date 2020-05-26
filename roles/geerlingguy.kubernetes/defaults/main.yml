@@ -25,12 +25,12 @@ kubernetes_web_ui_manifest_file: https://raw.githubusercontent.com/kubernetes/da
 kubernetes_pod_network:
   # Flannel CNI.
   cni: 'flannel'
-  cidr: '192.168.37.0/24'
+  cidr: '10.0.10.0/24'
   # Calico CNI.
   # cni: 'calico'
   # cidr: '192.168.0.0/16'
 
-kubernetes_apiserver_advertise_address: 'ansible_default_ipv4.address'
+kubernetes_apiserver_advertise_address: 192.168.37.37
 kubernetes_version_kubeadm: 'stable-{{ kubernetes_version }}'
 kubernetes_ignore_preflight_errors: 'all'
 

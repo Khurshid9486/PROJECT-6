@@ -1,6 +1,13 @@
 ---
-- name: Join node to Kubernetes master
-  shell: >
-    {{ kubernetes_join_command }}
-    creates=/etc/kubernetes/kubelet.conf
-  tags: ['skip_ansible_lint']
+- name: Join Nodes
+  hosts: test2 test3
+  user: ansible
+  become: true
+
+  tasks:
+
+  - name: Join node to Kubernetes master
+    shell: >
+      {{ kubernetes_join_command }}
+      creates=/etc/kubernetes/kubelet.conf
+    tags: ['skip_ansible_lint']

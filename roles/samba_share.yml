@@ -1,0 +1,53 @@
+---
+- name: install samba
+  hosts: prdx-samba601.ziyotek6.local
+  user: ansible
+  become: true
+  vars: 
+#    samba_users:
+#      username: smbuser
+#      password: password
+  tasks:
+   - name: install samba packages
+     yum:
+      name: ['samba', 'samba-common', 'samba-client']
+      state: present
+   - name: create directory
+     shell: 
+       cmd: mkdir -p /smbshare/{secure,open}
+   - name: giving permissions
+     shell:
+       cmd: chmod 777 -R /smbshare
+   - name: create file
+     shell:
+       cmd: touch /smbshare/open/test_file
+   - name: modifing the smb file
+     shell:
+       cmd: printf "[smbshare]\ncomment = Samba share\npath = /smbshare/open\nwritable\ = yes\nguest ok = yes\nguest only = yes\npublic = yes\n" >> /etc/samba/smb.conf
+
+#   - name: Configure Samba users.
+#     shell: >
+#       || (echo 'password'; echo 'password')
+#       | smbpasswd -s -a smbuser
+#     register: smbpasswd
+#     changed_when: "'Added user' in smbpasswd.stdout"
+#     with_items: "{{ samba_users }}"
+#     loop_control:
+#       label: smbuser
+
+
+   - name: modifing the smb file
+     shell:
+       cmd: printf "[secure]\ncomment = Samba share\npath = /smbshare/secure\nvalid users = smbuser\nwritable = yes\nguest ok = no\nbrowseable = yes\n" >> /etc/samba/smb.conf
+   - name: start and enable smb
+     service:
+       name: smb
+       state: started
+       enabled: yes
+   - name: start and enable nmb
+     service:
+       name: nmb
+       state: started
+       enabled: yes
+
+

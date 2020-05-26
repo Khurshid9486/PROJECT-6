@@ -1,0 +1,27 @@
+---
+- name: Configure Nodes in Cluster
+  hosts: test7
+  user: ansible
+  become: true
+
+  tasks:
+    - name: Init a new swarm with default parameters
+      docker_swarm:
+        state: present
+
+    - name: Update swarm configuration
+      docker_swarm:
+        state: present
+        election_tick: 5
+- name: Join worker
+  hosts: test7
+  user: ansible
+  become: true
+
+  tasks:
+    - name: Add nodes
+      docker_swarm:
+        state: join
+        advertise_addr: 192.168.37.50
+        join_token: SWMTKN-1--xxxxx
+        remote_addrs: [ '192.168.37.50:2377' ]

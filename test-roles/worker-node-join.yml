@@ -1,0 +1,11 @@
+- name: Join worker to manager node
+  hosts: test2
+  remote_user: ansible
+  become: true
+
+  tasks:
+    - name: Add worker
+      shell: >
+        docker swarm join          
+        --advertise_addr: 192.168.37.50:2377
+        --token SWMTKN-1--xxxxx 192.168.37.50:2377 

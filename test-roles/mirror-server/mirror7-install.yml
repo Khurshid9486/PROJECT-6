@@ -1,0 +1,90 @@
+---
+- hosts: repo
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Install all Mirror need packages
+    yum:
+      name: ['epel-release', 'nginx', 'createrepo', 'yum-utils']
+      state: latest
+
+- hosts: repo
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Enable service nginx
+    service:
+      name: nginx
+      enabled: yes
+      state: restarted
+
+- hosts: prdx-ftp601.ziyotek6.local
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Create the directory that will store the packages
+    file:
+      path: /var/www/html/repos/{base,epel,extras,updates}
+      state: directory
+      mode: '0755'
+
+- hosts: prdx-ftp601.ziyotek6.local
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: This synchronize CentOS YUM repositories to the local directories
+    shell:
+      cmd: reposync -g -l -d -m --repoid=base --newest-only --download-metadata --download_path=/var/www/html/repos/
+      chdir: /
+    shell:
+      cmd: reposync -g -l -d -m --repoid=epel --newest-only --download-metadata --download_path=/var/www/html/repos/
+      chdir: /
+    shell:
+      cmd: reposync -g -l -d -m --repoid=extras --newest-only --download-metadata --download_path=/var/www/html/repos/
+      chdir: /
+    shell:
+      cmd: reposync -g -l -d -m --repoid=base --newest-only --download-metadata --download_path=/var/www/html/repos/
+      chdir: /
+
+- hosts: prdx-ftp601.ziyotek6.local
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Create a new repodata for the local repositories
+    shell:
+      cmd: createrepo -g comps.xml /var/www/html/repos/base/
+      chdir: /
+    shell:
+      cmd: createrepo -g comps.xml /var/www/html/repos/epel/
+      chdir: /
+    shell:
+      cmd: createrepo -g comps.xml /var/www/html/repos/extras/
+      chdir: /
+    shell:
+      cmd: createrepo -g comps.xml /var/www/html/repos/updates/
+      chdir: /
+
+- hosts: prdx-ftp601.ziyotek6.local
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Copy nginx.cnf file
+    copy:
+      src: /ansible/PROJECT-6/test-roles/mirror-server/template.cfg
+      dest: /etc/nginx/conf.d/repos.conf 
+
+- hosts: prdx-ftp601.ziyotek6.local
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Restart service nginx
+    service:
+      name: nginx
+      state: restarted

@@ -1,0 +1,14 @@
+---
+- name: Kubernetes install
+  hosts: test2
+  remote_user: ansible
+  become: true
+  
+  tasks:
+    - name: Swapoff
+      shell: 
+        cmd: swapoff -a
+
+    - name:
+      
+  

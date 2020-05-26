@@ -1,0 +1,15 @@
+---
+- name: Deploying Dashboard
+  hosts: kubemaster
+  user: ansible
+  become: true
+
+  tasks: 
+  - name: Deploy 
+    shell: 
+      cmd: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+
+  - name: Proxy
+    shell: 
+      cmd: kubectl proxy
+  

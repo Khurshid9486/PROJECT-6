@@ -1,0 +1,71 @@
+---
+# defaults file for /etc/ansible/roles/slapd
+ldap_domain: example
+ldap_domain_ext: fr
+ldap_server: ldap://localhost
+ldap_secret_file: /root/.ldap.secret
+ldap_provider_uri: "{{ ansible_fqdn }}"
+ldap_suffix: "dc={{ ldap_domain }},dc={{ ldap_domain_ext }}"
+import_data: false
+ldap_replication_consumer: false
+ldap_replication_provider: false
+ldap_schemas:
+ - cosine
+ldap_have_ssl: true
+ldap_ssl_dir: /etc/openldap/certs/
+ldap_ssl_cert_path: "{{ ldap_ssl_dir }}/cert.pem"
+ldap_ssl_key_path: "{{ ldap_ssl_dir }}/key.pem"
+ldap_ssl_cacert_path: "{{ ldap_ssl_dir }}/cert.pem"
+ldap_admin_dn: "cn=manager,{{ldap_suffix}}"
+ldap_admin_password: "CHANGEME"
+ldap_auth:
+  bind_dn: "{{ ldap_admin_dn }}"
+  bind_pw: "{{ ldap_admin_password }}"
+ldap_cache_size: 3000
+ldap_idlcache_size: 6000
+ldap_checkpoint: 1024 30
+ldap_entries:
+  - dn: cn=module,cn=config
+    objectClass: olcModuleList
+    attributes:
+      cn: module
+      olcModulePath: /usr/lib64/openldap/
+      olcModuleLoad: auditlog.la
+
+  - dn: olcOverlay={0}auditlog,olcDatabase={2}hdb,cn=config
+    objectClass: 
+      - olcOverlayConfig
+      - olcAuditLogConfig
+    attributes:
+      olcOverlay: "{0}auditlog"
+      olcAuditlogFile: /var/log/ldapaudit.log
+
+  - dn: cn=module,cn=config
+    objectClass: olcModuleList
+    attributes:
+      cn: module
+      olcModulePath: /usr/lib64/openldap/
+      olcModuleLoad: memberof.la
+
+  - dn: olcOverlay={1}memberof,olcDatabase={2}hdb,cn=config
+    objectClass:
+      - olcConfig
+      - olcOverlayConfig
+      - olcMemberOf
+    attributes:
+      olcOverlay: "{1}memberof"
+
+  - dn: cn=module,cn=config
+    objectClass: olcModuleList
+    attributes:
+      cn: module
+      olcModulePath: /usr/lib64/openldap/
+      olcModuleLoad: unique.la
+
+  - dn: olcOverlay={2}unique,olcdatabase={2}hdb,cn=config
+    objectClass: 
+      - olcOverlayConfig
+      - olcUniqueConfig
+    attributes:
+      olcOverlay: "{2}unique"
+      olcUniqueURI: ldap:///?uid?sub?

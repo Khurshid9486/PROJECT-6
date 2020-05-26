@@ -1,0 +1,15 @@
+dn: dc="{{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+objectClass: dcObject
+objectClass: organization
+o: dc="{{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+dc: dc="{{ openldap_server_domain_name.split('.')[0] }}"
+
+dn: ou=users,dc="{{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: ou=groups,dc="{{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+objectClass: organizationalUnit
+objectClass: top
+ou: groups

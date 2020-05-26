@@ -1,0 +1,7 @@
+ldap_packages:
+  - openldap-servers
+  - openldap-clients
+  - ldapvi
+  - python-ldap
+ldap_service: slapd
+ldap_user: ldap

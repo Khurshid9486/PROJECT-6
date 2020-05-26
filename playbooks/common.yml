@@ -5,8 +5,58 @@
   become: true
   become_method: sudo
   tasks:
-  - name: install all initial packages
-    yum:
-      name: ['man', 'man-pages', 'mlocate', 'vim', 'bind-utils', 'autofs']
-      state: latest
-  
+#  - name: install epel package
+#    yum:
+#      name: epel-release
+#  - name: install all initial packages
+#    yum:
+#      name: ['ftp','nagios-plugins-all','nfs-utils','bind-utils','nrpe','wget','man', 'man-pages', 'mlocate', 'vim', 'openldap-clients','nss-pam-ldapd','authconfig', 'bind-utils', 'autofs']
+#      state: latest
+#  - name: CA.crt 
+#    shell: 
+#      cmd: mkdir /etc/openldap/cacerts 
+#  - name: cpying CA.crt 
+#    shell: 
+#      cmd: cd /etc/openldap/cacerts && wget http://prdx-ldap601.ziyotek6.local/CA.crt
+# - name: configuring the AUTHCONFIG 
+#    shell: 
+#      cmd: authconfig --enableforcelegacy --update && authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="prdx-ldap601.ziyotek6.local" --ldapbasedn="dc=ziyotek6,dc=local" --update
+#  - name: Copying
+#    copy:
+#      src: /ansible/PROJECT-6/playbooks/nrpe.cfg
+#      dest: /etc/nagios/nrpe.cfg
+#  - name: make sure chrond is running and enabled
+#    service:
+#      name: chronyd 
+#      state: restarted
+#      enabled: yes
+#  - name: make sure autofs is running and enabled
+#    service:
+#      name: autofs
+#      state: restarted
+#      enabled: yes
+#  - name: make sure nrpe is running and enabled
+#    service:
+#      name: nrpe
+#      state: restarted
+#      enabled: yes
+#  - name: make sure httpd is running and enabled ( only for boxes that has a http installed)
+#    service:
+#      name: httpd
+#      state: restarted
+#      enabled: yes
+#      notify: restart nrpe
+#  handlers:
+#  - name: restart nrpe
+#    service:
+#      name: nrpe
+#      state: restarted
+#      enabled: yes
+#  - name: Configuring RootLogin 
+#    shell: 
+#      cmd: echo PermitRootLogin no >> /etc/ssh/sshd_config
+#  - name: restart sshd
+#    service:
+#      name: sshd
+#      state: restarted
+#      enabled: yes

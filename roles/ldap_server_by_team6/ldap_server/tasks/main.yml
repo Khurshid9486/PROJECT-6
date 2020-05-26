@@ -1,0 +1,66 @@
+---
+# tasks file for ldap_server
+  - name: install all initial packages
+    yum:
+      name: ['epel-release','openldap', 'openldap-clients', 'openldap-servers', 'openssl', 'httpd','phpldapadmin']
+      state: latest
+  - name: copying all files for ldapmodify command to the /root/
+    template: src=hdb.ldif.j2 dest=/root/hdb.ldif
+  - name: copying all files for ldapmodify command to the /root/
+    template: src=monitor.ldif.j2 dest=/root//monitor.ldif
+  - name: copying all files for ldapmodify command to the /root/
+    template: src=key.ldif.j2 dest=/root/key.ldif
+  - name: copying all files for ldapmodify command to the /root/
+    template: src=base.ldif.j2 dest=/root/base.ldif
+  - name: copying files needed for PHPMYLPAD
+    template: src=config.php.j2 dest=/etc/phpldapadmin/config.php
+  - name: copying files needed for PHPMYLPAD
+    template: src=phpldapadmin.conf.j2 dest=/etc/httpd/conf.d/phpldapadmin.conf
+  - name: Start service slapd, if not started
+    service:
+      name: slapd
+      state: started
+      enabled: yes
+  
+  
+  - name : ldapmodify -Y EXTERNAL -H ldapi:/// -f hdb.ldif
+    shell: 
+      cmd: ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/hdb.ldif
+  - name: ldapmodify -Y EXTERNAL -H ldapi:/// -f monitor.ldif
+    shell: 
+      cmd: ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/monitor.ldif
+  - name: Configure OpenLDAP to listen SSL/TLS
+    template: src=ldap.j2 dest=/etc/sysconfig/ldap
+  - name: ldapmodify -Y EXTERNAL -H ldapi:/// -f key.ldif
+    shell: 
+      cmd: ldapmodify -Y EXTERNAL -H ldapi:/// -f /root/key.ldif
+  - name: Restart service httpd, in all cases
+    service:
+      name: httpd
+      state: restarted
+  - name: Restart service slapd in all cases
+    service:
+      name: slapd
+      state: restarted
+  - name: ldapadd -x -D "cn=admin,dc=example,dc=com" -f base.ldif
+    shell: 
+      cmd: ldapadd -x -D "cn=admin,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -f /root/base.ldif -w "{{ openldap_server_rootpw }}"
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+    shell: 
+      cmd: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+    shell: 
+      cmd: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+    shell: 
+      cmd: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+  - name: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+    shell: 
+      cmd: sed -i 's/SELINUX=permissive/SELINUX=/g' /etc/selinux/config 
+  - name: Restart service httpd, in all cases
+    service:
+      name: httpd
+      state: restarted
+
+
+      ###ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created 

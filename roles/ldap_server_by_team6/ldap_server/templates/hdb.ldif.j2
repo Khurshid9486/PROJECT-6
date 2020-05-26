@@ -1,0 +1,10 @@
+dn: olcDatabase={2}hdb,cn=config
+changeType: modify
+replace: olcSuffix
+olcSuffix: dc="{{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+-
+replace: olcRootDN
+olcRootDN: cn=admin,dc="{{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+-
+add: olcRootPW
+olcRootPW: ####################### PUT YOUR ENCRYPTED PASSWORD HERE AND ERASE THIS COMMENT!!

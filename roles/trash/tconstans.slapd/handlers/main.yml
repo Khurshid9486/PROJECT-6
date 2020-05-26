@@ -1,0 +1,6 @@
+---
+# handlers file for /etc/ansible/roles/slapd
+- name: restart_slapd
+  service:
+    name: slapd
+    state: restarted

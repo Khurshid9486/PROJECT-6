@@ -1,13 +1,13 @@
 ---
   - name: Script for configuring complete mail server
-    hosts: mailserver 
+    hosts: test1 
     remote_user: ansible
     become: true
 
     vars:
       myhostname: prdx-mail601
       mydomain: ziyotek6.local
-      org_name: "Team 6"
+      org_name: "Ziyotek6"
 
     tasks:
     - name: Enable epel-release
@@ -25,11 +25,11 @@
       - squirrelmail
       - mailx
 
-    - name: Change listen to 192.168.37.19:80 in httpd.conf
+    - name: Change listen to 192.168.37.50:80 in httpd.conf
       lineinfile:
         dest: /etc/httpd/conf/httpd.conf
         regexp: Listen .*80
-        line: Listen 192.168.37.19:80
+        line: Listen 192.168.37.50:80
       notify:
       - restart httpd
 
@@ -40,7 +40,7 @@
       lineinfile:
         dest: /etc/postfix/main.cf
         regexp: myhostname=.*
-        line: myhostname=prdx-mail601.ziyotek6.local
+        line: myhostname=labx-001.ziyotek6.local
 
     - name: Set correct domain for mail server
       lineinfile:
@@ -85,7 +85,7 @@
       service: name=dovecot state=restarted enabled=yes
 
     - name: Configure squirrelmail using template
-      template: src=config.php.j2 dest=/etc/squirrelmail/config.php owner=root group=apache mode=640
+      template: src=config.php.j2 dest=/etc/squirrelmail/config.php owner=root group=root mode=640
 
 
 

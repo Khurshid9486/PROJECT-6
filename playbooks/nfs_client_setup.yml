@@ -1,0 +1,34 @@
+---
+- name: INSTALLING NFS PKGS AND CONFIGURING FILES
+  hosts: nfs
+  become: true
+
+  tasks:
+    - name: installing pkgs
+      yum:
+        name: "nfs-utils"
+        state: latest
+ #   - name: changing selinux status
+ #    shell: 
+ #       cmd: setenforce 0
+
+  #  - name: changing selinux status
+  #    shell: 
+  #      cmd: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+    
+  #  - name: making mount point 
+  #    shell: 
+  #      cmd: mkdir /share
+    
+    - name: mounting device 
+      shell: 
+        cmd: mount -t nfs 192.168.37.18:/share/ /share
+
+
+    - name: modifing the fstab file
+      blockinfile:
+        block: '192.168.37.18:/share /share nfs defaults 0 0'
+        path: /etc/fstab
+
+
+

@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: prdx-lb671.ziyotek6.local
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - role: robertdebock.haproxy

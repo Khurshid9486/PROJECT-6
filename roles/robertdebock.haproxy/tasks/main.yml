@@ -1,0 +1,48 @@
+---
+# tasks file for haproxy
+- name: install haproxy
+  package:
+    name: haproxy
+    state: present
+  register: haproxy_install_haproxy
+  until: haproxy_install_haproxy is succeeded
+  retries: 3
+
+- name: create group
+  group:
+    name: haproxy
+    system: yes
+    state: present
+
+- name: create user
+  user:
+    name: haproxy
+    system: yes
+    state: present
+
+#- name: configure software
+#  template:
+#    src: haproxy.cfg.j2
+#    dest: /etc/haproxy/haproxy.cfg
+#    validate: haproxy -c -f %s
+#  notify:
+#    - restart haproxy
+#  when:
+#    - ansible_default_ipv4 is defined
+
+- name: add haproxy_stats_port to http_port_t selinux type
+  seport:
+    ports: "{{ haproxy_stats_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when:
+    - haproxy_stats_port is defined
+    - ansible_selinux.status is defined
+    - ansible_selinux.status == "disabled"
+
+- name: start and enable haproxy
+  service:
+    name: haproxy
+    state: started
+    enabled: yes

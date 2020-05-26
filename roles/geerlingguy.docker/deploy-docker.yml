@@ -1,0 +1,7 @@
+---
+- name: Deploy Docker-Master
+  hosts: kubemaster kubeworkers 
+  remote_user: ansible
+  become: true
+  roles:
+   - /ansible/PROJECT-6/roles/geerlingguy.docker    
