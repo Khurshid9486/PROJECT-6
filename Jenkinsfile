@@ -10,8 +10,7 @@ pipeline {
     JENKINS_CRED = "${PROJECT}"
   }
 
-  agent {
-    any {
+  agent any
       label 'sample-app'
       defaultContainer 'jnlp'
       yaml """
