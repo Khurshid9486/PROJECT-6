@@ -10,7 +10,8 @@ pipeline {
     JENKINS_CRED = "${PROJECT}"
   }
 
-  agent any {
+  agent {
+    any {
  //     label 'sample-app'
       defaultContainer 'jnlp'
       yaml """
@@ -102,6 +103,7 @@ spec:
           step([$class: 'KubernetesEngineBuilder', namespace: "${env.BRANCH_NAME}", projectId: env.PROJECT, clusterName: env.CLUSTER, zone: env.CLUSTER_ZONE, manifestPattern: 'k8s/dev', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
           echo 'To access your environment run `kubectl proxy`'
           echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${FE_SVC_NAME}:80/"
+          }
         }
       }
     }
