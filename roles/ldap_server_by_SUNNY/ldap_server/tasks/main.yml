@@ -1,5 +1,8 @@
 ---
 # tasks file for ldap_server
+  - name: install epel package
+    yum:
+      name: epel-release
   - name: install all initial packages
     yum:
       name: ['epel-release','openldap', 'openldap-clients', 'openldap-servers', 'openssl', 'httpd','phpldapadmin']
@@ -58,6 +61,12 @@
     service:
       name: httpd
       state: restarted
+  - name: changing selinux status TEMP
+    shell: 
+      cmd: setenforce 0
+  - name: changing selinux status PERMANENTLY
+    shell: 
+      cmd: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 
       ###ldapadd -x -D "cn=Manager,dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}" -w {{ openldap_server_rootpw }} -f {{ result.dest|default(result.path) }} && touch {{ openldap_server_app_path }}/rootdn_created creates={{ openldap_server_app_path }}/rootdn_created 

@@ -1,6 +1,6 @@
 ---
 - name: INSTALLING NFS PKGS AND CONFIGURING FILES
-  hosts: nfs
+  hosts: k8s_inventory
   become: true
 
   tasks:
@@ -8,17 +8,17 @@
       yum:
         name: "nfs-utils"
         state: latest
- #   - name: changing selinux status
- #    shell: 
- #       cmd: setenforce 0
+    - name: changing selinux status
+      shell: 
+       cmd: setenforce 0
 
-  #  - name: changing selinux status
-  #    shell: 
-  #      cmd: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+    - name: changing selinux status
+      shell: 
+        cmd: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
     
-  #  - name: making mount point 
-  #    shell: 
-  #      cmd: mkdir /share
+    - name: making mount point 
+      shell: 
+        cmd: mkdir /share
     
     - name: mounting device 
       shell: 

@@ -1,0 +1,13 @@
+---
+- name: INSTALL K8S
+  hosts: kubernetescluster
+  remote_user: ansible
+  become: true
+
+
+  vars:
+    kubernetes_allow_pods_on_master: false
+
+  roles:
+    - geerlingguy.docker
+    - geerlingguy.kubernetes

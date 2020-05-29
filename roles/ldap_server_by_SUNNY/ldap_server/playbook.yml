@@ -1,5 +1,5 @@
 ---
-- hosts: ldapserver
+- hosts: test-box
   remote_user: root
   become: yes
   roles:

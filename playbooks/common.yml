@@ -1,45 +1,52 @@
 ---
 - name: install initial packages on all boxes
-  hosts: all 
+  hosts: test-box 
   remote_user: ansible
   become: true
   become_method: sudo
   tasks:
-#  - name: install epel package
-#    yum:
-#      name: epel-release
-#  - name: install all initial packages
-#    yum:
-#      name: ['ftp','nagios-plugins-all','nfs-utils','bind-utils','nrpe','wget','man', 'man-pages', 'mlocate', 'vim', 'openldap-clients','nss-pam-ldapd','authconfig', 'bind-utils', 'autofs']
-#      state: latest
-#  - name: CA.crt 
-#    shell: 
-#      cmd: mkdir /etc/openldap/cacerts 
-#  - name: cpying CA.crt 
-#    shell: 
-#      cmd: cd /etc/openldap/cacerts && wget http://prdx-ldap601.ziyotek6.local/CA.crt
-# - name: configuring the AUTHCONFIG 
-#    shell: 
-#      cmd: authconfig --enableforcelegacy --update && authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="prdx-ldap601.ziyotek6.local" --ldapbasedn="dc=ziyotek6,dc=local" --update
-#  - name: Copying
-#    copy:
-#      src: /ansible/PROJECT-6/playbooks/nrpe.cfg
-#      dest: /etc/nagios/nrpe.cfg
-#  - name: make sure chrond is running and enabled
-#    service:
-#      name: chronyd 
-#      state: restarted
-#      enabled: yes
-#  - name: make sure autofs is running and enabled
-#    service:
-#      name: autofs
-#      state: restarted
-#      enabled: yes
-#  - name: make sure nrpe is running and enabled
-#    service:
-#      name: nrpe
-#      state: restarted
-#      enabled: yes
+ 
+  - name: changing selinux status TEMP
+    shell: 
+      cmd: setenforce 0
+  - name: changing selinux status PERMANENTLY
+    shell: 
+      cmd: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+  - name: install epel package
+    yum:
+      name: epel-release
+  - name: install all initial packages
+    yum:
+      name: ['ftp','nagios-plugins-all','nfs-utils','bind-utils','nrpe','wget','man', 'man-pages', 'mlocate', 'vim', 'openldap-clients','nss-pam-ldapd','authconfig', 'bind-utils', 'autofs']
+      state: latest
+  - name: Mkdir for LDAP CA.crt 
+    shell: 
+      cmd: mkdir /etc/openldap/cacerts 
+  - name: downloading the cert for LDAP CA.crt 
+    shell: 
+      cmd: cd /etc/openldap/cacerts && wget http://prdx-ldap601.ziyotek6.local/CA.crt
+  - name: configuring the AUTHCONFIG 
+    shell: 
+      cmd: authconfig --enableforcelegacy --update && authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="prdx-ldap601.ziyotek6.local" --ldapbasedn="dc=ziyotek6,dc=local" --update
+  - name: Copying nrpe.cfg file for NAGIOS agent
+    copy:
+      src: /ansible/PROJECT-6/playbooks/nrpe.cfg
+      dest: /etc/nagios/nrpe.cfg
+  - name: make sure chrond is running and enabled
+    service:
+      name: chronyd 
+      state: restarted
+      enabled: yes
+  - name: make sure autofs is running and enabled
+    service:
+      name: autofs
+      state: restarted
+      enabled: yes
+  - name: make sure nrpe is running and enabled
+    service:
+      name: nrpe
+      state: restarted
+      enabled: yes
 #  - name: make sure httpd is running and enabled ( only for boxes that has a http installed)
 #    service:
 #      name: httpd
@@ -47,16 +54,53 @@
 #      enabled: yes
 #      notify: restart nrpe
 #  handlers:
-#  - name: restart nrpe
-#    service:
-#      name: nrpe
-#      state: restarted
-#      enabled: yes
-#  - name: Configuring RootLogin 
-#    shell: 
-#      cmd: echo PermitRootLogin no >> /etc/ssh/sshd_config
-#  - name: restart sshd
-#    service:
-#      name: sshd
-#      state: restarted
-#      enabled: yes
+  - name: restart nrpe
+    service:
+      name: nrpe
+      state: restarted
+      enabled: yes
+  - name: Configuring RootLogin 
+    shell: 
+      cmd: echo PermitRootLogin no >> /etc/ssh/sshd_config
+  - name: restart sshd
+    service:
+      name: sshd
+      state: restarted
+      enabled: yes
+  - name: copying the files for AUTOFS
+    copy:
+      src: /etc/auto.home
+      dest: /etc/auto.home
+  - name: copying the files for AUTOFS (map file)
+    copy:
+      src: /etc/auto.master
+      dest: /etc/auto.master
+    notify: restart autofs
+  handlers:
+  - name: restart autofs
+    service:
+      name: autofs
+      state: restarted
+      enabled: yes
+  - name: making sure nfs-uitls package is installed
+    yum:
+      name: "nfs-utils"
+      state: present
+  - name: changing selinux status
+    shell: 
+     cmd: setenforce 0
+  - name: making mount point for nfs
+    shell: 
+      cmd: mkdir /share
+  - name: mounting device temp.
+    shell: 
+      cmd: mount -t nfs 192.168.37.18:/share/ /share
+  - name: Copying Chronyc.conf file
+    copy:
+      src: /ansible/PROJECT-6/playbooks/chrony_serv/chrony.conf1
+      dest: /etc/chrony.conf
+  - name: restart chronyd
+    service:
+      name: chronyd
+      state: restarted
+      enabled: yes

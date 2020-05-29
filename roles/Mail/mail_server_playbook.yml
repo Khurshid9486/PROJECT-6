@@ -1,11 +1,11 @@
 ---
   - name: Script for configuring complete mail server
-    hosts: test1 
+    hosts: mailserver 
     remote_user: ansible
     become: true
 
     vars:
-      myhostname: prdx-mail601
+      myhostname: prdx-mail601.ziyotek6.local
       mydomain: ziyotek6.local
       org_name: "Ziyotek6"
 
@@ -25,11 +25,11 @@
       - squirrelmail
       - mailx
 
-    - name: Change listen to 192.168.37.50:80 in httpd.conf
+    - name: Change listen to 192.168.37.19:80 in httpd.conf
       lineinfile:
         dest: /etc/httpd/conf/httpd.conf
         regexp: Listen .*80
-        line: Listen 192.168.37.50:80
+        line: Listen 192.168.37.19:80
       notify:
       - restart httpd
 
@@ -40,7 +40,7 @@
       lineinfile:
         dest: /etc/postfix/main.cf
         regexp: myhostname=.*
-        line: myhostname=labx-001.ziyotek6.local
+        line: myhostname=prdx-mail601.ziyotek6.local
 
     - name: Set correct domain for mail server
       lineinfile:
@@ -60,11 +60,29 @@
         regexp: "^inet_interfaces *=.*"
         line: "inet_interfaces=all"
 
+    - name: Set inet_interfaces for mail server to all
+      lineinfile:
+        dest: /etc/postfix/main.cf
+        regexp: "^inet_protocols*=.*"
+        line: "inet_protocols=all"
+
+    - name: Set correct mydestination for mail server
+      lineinfile:
+        dest: /etc/postfix/main.cf
+        regexp: "^mydestination *=.*"
+        line: "#mydestination = $myhostname, localhost.$mydomain, localhost"   
+
     - name: Set correct mydestination for mail server
       lineinfile:
         dest: /etc/postfix/main.cf
         regexp: "^mydestination *=.*"
         line: "mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain"
+
+    - name: Set correct mydestination for mail server
+      lineinfile:
+        dest: /etc/postfix/main.cf
+        regexp: "^mynetworks *=.*"
+        line: "mynetworks = 192.168.37.0/24, 127.0.0.0/8"
 
     - name: Set home_mailbox for mail server
       lineinfile:
@@ -80,6 +98,36 @@
         dest: /etc/dovecot/conf.d/10-mail.conf
         regexp: "^mail_location *=.*"
         line: "mail_location = maildir:~/mail"
+
+    - name: Set mail_location for imap server
+      lineinfile:
+        dest: /etc/dovecot/dovecot.conf
+        regexp: "^protocols *=.*"
+        line: "protocols = imap pop3 lmtp"
+
+    - name: Set mail_location for imap server
+      lineinfile:
+        dest: /etc/dovecot/conf.d/10-auth.conf 
+        regexp: "^disable_plaintext_auth *=.*"
+        line: "disable_plaintext_auth = yes"
+
+    - name: Set mail_location for imap server
+      lineinfile:
+        dest: /etc/dovecot/conf.d/10-auth.conf 
+        regexp: "^auth_mechanisms *=.* "
+        line: "auth_mechanisms = plain login"
+
+    # - name: Set mail_location for imap server
+    #   lineinfile:
+    #     dest:  /etc/dovecot/conf.d/10-master.conf
+    #     regexp: "^user *=.* "
+    #     line: "user = postfix"
+
+    # - name: Set mail_location for imap server
+    #   lineinfile:
+    #     dest:  /etc/dovecot/conf.d/10-master.conf
+    #     regexp: "^group *=.* "
+    #     line: "group = postfix"
 
     - name: Restart dovecot and enable it on startup
       service: name=dovecot state=restarted enabled=yes
