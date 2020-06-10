@@ -27,7 +27,7 @@
       cmd: cd /etc/openldap/cacerts && wget http://labx-ldap601.comcast6.local/CA.crt
   - name: configuring the AUTHCONFIG 
     shell: 
-      cmd: authconfig --enableforcelegacy --update && authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="prdx-ldap601.ziyotek6.local" --ldapbasedn="dc=ziyotek6,dc=local" --update
+      cmd: authconfig --enableforcelegacy --update && authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="labx-ldap601.comcast6.local" --ldapbasedn="dc=ziyotek6,dc=local" --update
   - name: Copying nrpe.cfg file for NAGIOS agent
     copy:
       src: /ansible/PROJECT-6/playbooks/nrpe.cfg
