@@ -24,7 +24,7 @@
       cmd: mkdir /etc/openldap/cacerts 
   - name: downloading the cert for LDAP CA.crt 
     shell: 
-      cmd: cd /etc/openldap/cacerts && wget http://prdx-ldap601.ziyotek6.local/CA.crt
+      cmd: cd /etc/openldap/cacerts && wget http://labx-ldap601.comcast6.local/CA.crt
   - name: configuring the AUTHCONFIG 
     shell: 
       cmd: authconfig --enableforcelegacy --update && authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="prdx-ldap601.ziyotek6.local" --ldapbasedn="dc=ziyotek6,dc=local" --update
